@@ -8,13 +8,17 @@ output: similarity, between 0 and 1
 from xmlrpc.client import boolean
 import networkx as nx
 import os
-import ssdeep
+from simhash import Simhash
 import javalang
 import xlwt
 import sys
 import pickle
 def getGraph(dot_path):
     return nx.DiGraph(nx.nx_pydot.read_dot(dot_path))
+
+def get_simhash(text):
+    # 使用simhash生成指纹
+    return str(Simhash(text).value)
 
 def normalizingLine(s): # e.g. "30:  Attribute createAttribute(KeyValuePair kvp)"
     try:
@@ -23,11 +27,11 @@ def normalizingLine(s): # e.g. "30:  Attribute createAttribute(KeyValuePair kvp)
         for i in range(len(tokens)):
             token = tokens[i]
 
-            temp_line.append(ssdeep.hash(str(type(token)).split('.')[-1][:-2])) # -2 is to remove the trailing ['>]
+            token_type = str(type(token)).split('.')[-1][:-2] # -2 is to remove the trailing ['>]
+            temp_line.append(get_simhash(token_type)) 
         return temp_line
     except:
-        print(s[1:-1], "can't parse!!!")
-        return [ssdeep.hash(s[1:-1])]
+        return [get_simhash(s[1:-1])]
 
 
 def commonLine(s): # without normalization
@@ -36,11 +40,11 @@ def commonLine(s): # without normalization
         temp_line = []   
         for i in range(len(tokens)):
             token = tokens[i]
-            temp_line.append(ssdeep.hash(token.value))
+            temp_line.append(get_simhash(token.value))
         return temp_line
     except:
         print(s[1:-1], "can't parse!!!")
-        return [ssdeep.hash(s[1:-1])]
+        return [get_simhash(s[1:-1])]
 
 def get_root_node(G):
     node = None
@@ -98,7 +102,9 @@ def editDistance(word1, word2):
             down = D[i][j - 1] + 1
             left_down = D[i - 1][j - 1] 
             if word1[i - 1] != word2[j - 1]:
-                left_down += 1-ssdeep.compare(word1[i-1], word2[j-1])/100
+                hamming_distance = Simhash(int(word1[i-1])).distance(Simhash(int(word2[j-1])))
+                similarity = 1 - (hamming_distance / 64.0)
+                left_down += 1 - similarity     
             D[i][j] = min(left, down, left_down)
     
     return D[n][m]

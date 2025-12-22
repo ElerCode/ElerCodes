@@ -1,4 +1,3 @@
-from lib2to3.pgen2.literals import simple_escapes
 import os
 import javalang
 from anytree import AnyNode

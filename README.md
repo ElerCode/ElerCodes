@@ -65,6 +65,28 @@ Eler/
 
 ## Usage
 
+### Step 0: CFG Generation
+
+Generate Control Flow Graphs from Java source files using Joern (required for graph-based similarity algorithms).
+Note: This step can be skipped — we provide pre-generated CFG .dot files in the GetSimilarity/cfg_dot/ folder.
+
+```bash
+python GetSimilarity/dot_CFG_generation.py \
+    --input <java_file_or_directory> \
+    --output <output_directory> \
+    --joern <path_to_joern_cli>
+```
+
+**Arguments:**
+
+| Argument | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `-i, --input` | Path to Java file or directory | Yes | - |
+| `-o, --output` | Directory to save CFG dot files | Yes | - |
+| `--joern` | Path to Joern CLI directory | No | `/home/user/joern/joern-cli` |
+| `--batch` | Process all Java files in directory | No | False |
+| `--keep-temp` | Keep temporary files for debugging | No | False |
+
 ### Step 1: Feature Extraction
 
 Extract nine-dimensional similarity features from code pairs using different clone detection algorithms.

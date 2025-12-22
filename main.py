@@ -156,7 +156,7 @@ def main():
     inputcsv = args.input
     clone_type = os.path.basename(inputcsv).split('.')[0]
     if 'noclone' in inputcsv.lower() or 'nonclone' in inputcsv.lower():
-        clone_type = 'noclone'
+        clone_type = 'nonclone'
     
     print(f"Processing: {inputcsv}")
     print(f"Clone type: {clone_type}")
