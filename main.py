@@ -87,7 +87,7 @@ def get_sim(tool, dataframe, inputpath, wrongfile, logfile):
         List of similarity scores
     """
     sim = []
-    for _, pair in dataframe.iterrows():
+    for _, pair in tqdm.tqdm(dataframe.iterrows(), total=len(dataframe), desc=f"{tool}", leave=False):
         id1, id2 = pair.FunID1, pair.FunID2
         
         # Skip graph-based algorithms for files that failed to parse

@@ -23,6 +23,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
 import joblib
 import pandas as pd
+from tqdm import tqdm
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import NearestCentroid
@@ -213,7 +214,7 @@ def train_models(train_X, train_Y, output_dir):
     os.makedirs(output_dir, exist_ok=True)
     classifiers = get_classifiers()
     
-    for name, clf in classifiers.items():
+    for name, clf in tqdm(classifiers.items(), desc="Training models", unit="model"):
         print(f"  Training {name}...")
         clf.fit(train_X, train_Y)
         model_path = os.path.join(output_dir, f'clf_{name}.pkl')
@@ -293,13 +294,14 @@ def evaluate_kfold(vectors, labels, k=5, threshold=6, output_dir=None, seed=42):
     print(f"  {k}-Fold Cross-Validation (threshold={threshold})")
     print(f"{'='*60}")
     
-    for fold, (train_index, test_index) in enumerate(kf.split(X), 1):
+    fold_iter = enumerate(kf.split(X), 1)
+    for fold, (train_index, test_index) in tqdm(fold_iter, total=k, desc="Cross-validation", unit="fold"):
         train_X, train_Y = X[train_index], Y[train_index]
         test_X, test_Y = X[test_index], Y[test_index]
         
         # Train classifiers
         classifiers = get_classifiers()
-        for name, clf in classifiers.items():
+        for name, clf in tqdm(classifiers.items(), desc=f"  Fold {fold}", leave=False, unit="clf"):
             clf.fit(train_X, train_Y)
         
         # Ensemble prediction
