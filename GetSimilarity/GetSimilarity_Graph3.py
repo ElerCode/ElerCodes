@@ -17,7 +17,6 @@ def getGraph(dot_path):
     return nx.DiGraph(nx.nx_pydot.read_dot(dot_path))
 
 def get_simhash(text):
-    # 使用simhash生成指纹
     return str(Simhash(text).value)
 
 def normalizingLine(s): # e.g. "30:  Attribute createAttribute(KeyValuePair kvp)"
